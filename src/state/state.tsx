@@ -4,16 +4,18 @@ import { Patient } from "../types";
 import { Action } from "./reducer";
 
 export type State = {
+  individualPatients: { [id: string]: Patient };
   patients: { [id: string]: Patient };
 };
 
 const initialState: State = {
-  patients: {}
+  patients: {},
+  individualPatients: {},
 };
 
 export const StateContext = createContext<[State, React.Dispatch<Action>]>([
   initialState,
-  () => initialState
+  () => initialState,
 ]);
 
 type StateProviderProps = {
@@ -21,10 +23,7 @@ type StateProviderProps = {
   children: React.ReactElement;
 };
 
-export const StateProvider = ({
-  reducer,
-  children
-}: StateProviderProps) => {
+export const StateProvider = ({ reducer, children }: StateProviderProps) => {
   const [state, dispatch] = useReducer(reducer, initialState);
   return (
     <StateContext.Provider value={[state, dispatch]}>
