@@ -32,3 +32,24 @@ export const StateProvider = ({ reducer, children }: StateProviderProps) => {
   );
 };
 export const useStateValue = () => useContext(StateContext);
+
+export const setPatientList = (patientList: Patient[]): Action => {
+  return {
+    type: "SET_PATIENT_LIST",
+    payload: patientList,
+  };
+};
+
+export const addPatient = (patient: Patient): Action => {
+  return {
+    type: "ADD_PATIENT",
+    payload: patient,
+  };
+};
+
+export const loadPatient = (patient: Patient): Action => {
+  return {
+    type: "LOAD_PATIENT",
+    payload: patient,
+  };
+};
