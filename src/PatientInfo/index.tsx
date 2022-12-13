@@ -3,39 +3,57 @@ import { useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useStateValue, loadPatient } from "../state";
 import { apiBaseUrl } from "../constants";
+import EntryDetails from "./EntryDetails";
 
-import { Patient } from "../types";
+import { Patient, Entry } from "../types";
 import { Box, Typography } from "@material-ui/core";
 
 const PatientInfo = () => {
   const { id } = useParams<{ id: string }>();
-  const [state, dispatch] = useStateValue();
+  const [{ individualPatients }, dispatch] = useStateValue();
 
   useEffect(() => {
     const fetchPatient = async () => {
       try {
-        const { data: patient } = await axios.get<Patient>(`${apiBaseUrl}/patients/${String(id)}`);
+        const { data: patient } = await axios.get<Patient>(
+          `${apiBaseUrl}/patients/${String(id)}`
+        );
         dispatch(loadPatient(patient));
       } catch (e) {
         console.error(e);
       }
     };
 
-    if (!state.individualPatients[String(id)]) {
+    if (!individualPatients[String(id)]) {
       void fetchPatient();
     }
   }, [dispatch]);
 
-  if (!state.individualPatients[String(id)]) return <div>loading...</div>;
+  if (!individualPatients[String(id)]) return <div>loading...</div>;
 
   return (
     <Box marginTop={3}>
-      <Typography align="left" variant="h6">
-        {state.individualPatients[String(id)].name}
+      <Typography align="left" variant="h4">
+        {individualPatients[String(id)].name}
       </Typography>
-      gender: {state.individualPatients[String(id)].gender}<br />
-      ssn: {state.individualPatients[String(id)].ssn}<br />
-      occupation: {state.individualPatients[String(id)].occupation}
+      <br />
+      <Box component="span" sx={{ display: "block" }}>
+        Gender: {individualPatients[String(id)].gender}
+        <br />
+        SSN: {individualPatients[String(id)].ssn}
+        <br />
+        Occupation: {individualPatients[String(id)].occupation}
+      </Box>
+      <br />
+      <Typography variant="h5">Entries</Typography>
+      <br />
+      <Box component="span" sx={{ display: "block" }}>
+        {individualPatients[String(id)].entries.map((entry: Entry) => (
+          <div key={entry.id} style={{ border: "1px solid black", borderRadius: "5px", padding: "5px", margin: "10px", maxWidth: "500px" }}>
+          <EntryDetails entry={entry} />
+        </div>
+        ))}
+      </Box>
     </Box>
   );
 };
